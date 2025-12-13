@@ -10,10 +10,14 @@ import { useTheme } from '@/hooks/useTheme';
 import {
   mockChartData,
   holdingsBreakdown,
+  mockPortfolioStats,
 } from '@/lib/mockData';
-import { Coins, Image, TrendingUp, Wallet, Sun, Moon, Settings, Sparkles, ExternalLink, Copy, Check } from 'lucide-react';
+import { Coins, Image, TrendingUp, Wallet, Sun, Moon, Settings, Sparkles, ExternalLink, Copy, Check, Dna } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useState } from 'react';
+
+import fcbcWhiteLogo from '@/assets/fcbc_white.png';
+import fcbcDarkLogo from '@/assets/fcbc_dark.png';
 
 const Index = () => {
   const { data: species = [], isLoading } = useSpecies(100);
@@ -29,26 +33,23 @@ const Index = () => {
     setTimeout(() => setCopied(false), 2000);
   };
 
-  const totalMarketCap = species.reduce((acc, s) => acc + s.marketCap, 0);
-  const totalHolders = species.reduce((acc, s) => acc + s.holders, 0);
-
   const formatValue = (value: number) => {
     if (value >= 1000000) return `$${(value / 1000000).toFixed(2)}M`;
     if (value >= 1000) return `$${(value / 1000).toFixed(2)}K`;
     return `$${value.toFixed(2)}`;
   };
 
+  const logo = theme === 'dark' ? fcbcDarkLogo : fcbcWhiteLogo;
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="sticky top-0 z-30 flex items-center justify-between h-16 px-4 sm:px-6 bg-background/80 backdrop-blur-md border-b border-border">
         <div className="flex items-center gap-3">
-          <div className="h-10 w-10 rounded-lg bg-gradient-primary flex items-center justify-center">
-            <span className="text-lg font-bold text-primary-foreground">FC</span>
-          </div>
+          <img src={logo} alt="FCBC" className="h-10 w-10" />
           <div className="hidden sm:block">
             <h1 className="font-semibold">FCBC Portfolio</h1>
-            <p className="text-xs text-muted-foreground">Track your holdings</p>
+            <p className="text-xs text-muted-foreground">Fyre DNA Pre-Assets</p>
           </div>
         </div>
 
@@ -105,27 +106,27 @@ const Index = () => {
         {/* Stats Grid */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <StatCard
-            label="Total Market Cap"
-            value={formatValue(totalMarketCap)}
+            label="Total Holdings"
+            value={mockPortfolioStats.totalHoldings.toLocaleString()}
             icon={<Wallet className="h-5 w-5" />}
             delay={0}
           />
           <StatCard
-            label="Species Tokens"
-            value={species.length.toLocaleString()}
-            icon={<Coins className="h-5 w-5" />}
+            label="NFT Pre-Assets"
+            value={mockPortfolioStats.nftPreAssets.toLocaleString()}
+            icon={<Image className="h-5 w-5" />}
             delay={100}
           />
           <StatCard
-            label="Total Holders"
-            value={totalHolders.toLocaleString()}
-            icon={<Image className="h-5 w-5" />}
+            label="Total Portfolio Value"
+            value={formatValue(mockPortfolioStats.totalPortfolioValue)}
+            icon={<TrendingUp className="h-5 w-5" />}
             delay={200}
           />
           <StatCard
-            label="NFT Collections"
-            value="4"
-            icon={<TrendingUp className="h-5 w-5" />}
+            label="Total DNA Units"
+            value={mockPortfolioStats.totalDNAUnits.toLocaleString()}
+            icon={<Dna className="h-5 w-5" />}
             delay={300}
           />
         </div>
@@ -136,7 +137,7 @@ const Index = () => {
           <HoldingsBreakdown data={holdingsBreakdown} className="animate-slide-up" />
         </div>
 
-        {/* Species Token List with Live API Data */}
+        {/* Fyre DNA Pre-Assets List with Live API Data */}
         <SpeciesTokenList 
           species={species} 
           isLoading={isLoading}

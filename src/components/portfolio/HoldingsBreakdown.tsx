@@ -35,8 +35,8 @@ export function HoldingsBreakdown({ data, className }: HoldingsBreakdownProps) {
               </Pie>
               <Tooltip
                 contentStyle={{
-                  backgroundColor: 'hsl(220, 18%, 10%)',
-                  border: '1px solid hsl(220, 15%, 18%)',
+                  backgroundColor: 'hsl(var(--card))',
+                  border: '1px solid hsl(var(--border))',
                   borderRadius: '8px',
                 }}
                 formatter={(value: number) => [`${value}%`, '']}
