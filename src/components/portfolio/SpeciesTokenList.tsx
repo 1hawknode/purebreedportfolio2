@@ -37,7 +37,7 @@ export function SpeciesTokenList({ species, isLoading, className }: SpeciesToken
   const [sortField, setSortField] = useState<SortField>('name');
   const [sortOrder, setSortOrder] = useState<SortOrder>('asc');
   const [statusFilter, setStatusFilter] = useState<string>('all');
-  const [preSnapshot, setPreSnapshot] = useState(false);
+  const [preSnapshot, setPreSnapshot] = useState(true);
 
   const uniqueStatuses = useMemo(() => {
     const statuses = new Set(species.map(s => s.status));
@@ -105,7 +105,7 @@ export function SpeciesTokenList({ species, isLoading, className }: SpeciesToken
     return (
       <div className={cn("rounded-lg bg-card shadow-card p-8", className)}>
         <div className="flex items-center justify-center">
-          <div className="animate-pulse text-muted-foreground">Loading species data...</div>
+          <div className="animate-pulse text-muted-foreground">Loading Fyre DNA data...</div>
         </div>
       </div>
     );
@@ -114,7 +114,7 @@ export function SpeciesTokenList({ species, isLoading, className }: SpeciesToken
   return (
     <div className={cn("rounded-lg bg-card shadow-card", className)}>
       <div className="flex items-center justify-between border-b border-border p-4">
-        <h3 className="font-semibold">Species Tokens</h3>
+        <h3 className="font-semibold">Fyre DNA Pre-Assets</h3>
         <span className="text-sm text-muted-foreground font-mono">
           {species.length.toLocaleString()} tokens
         </span>
@@ -177,11 +177,11 @@ export function SpeciesTokenList({ species, isLoading, className }: SpeciesToken
             checked={preSnapshot}
             onCheckedChange={setPreSnapshot}
           />
-          <Label htmlFor="snapshot-toggle" className="text-sm cursor-pointer">
-            {preSnapshot ? 'Pre-Snapshot Data' : 'Post-Snapshot Data'}
+          <Label htmlFor="snapshot-toggle" className="text-sm cursor-pointer font-medium">
+            Pre-Snapshot Data
           </Label>
           <span className="text-xs text-muted-foreground ml-2">
-            {preSnapshot ? '(Historical view)' : '(Current live data)'}
+            {preSnapshot ? '(Historical snapshot view)' : '(Current live data)'}
           </span>
         </div>
       </div>
@@ -191,7 +191,7 @@ export function SpeciesTokenList({ species, isLoading, className }: SpeciesToken
           <thead>
             <tr className="border-b border-border text-left text-sm text-muted-foreground">
               <th className="p-4 font-medium cursor-pointer hover:text-foreground" onClick={() => toggleSort('name')}>
-                Species {sortField === 'name' && (sortOrder === 'asc' ? '↑' : '↓')}
+                DNA Asset {sortField === 'name' && (sortOrder === 'asc' ? '↑' : '↓')}
               </th>
               <th className="p-4 font-medium cursor-pointer hover:text-foreground" onClick={() => toggleSort('symbol')}>
                 Ticker {sortField === 'symbol' && (sortOrder === 'asc' ? '↑' : '↓')}
