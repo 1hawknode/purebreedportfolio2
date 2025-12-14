@@ -72,17 +72,12 @@ export function NFTCollections({ className }: NFTCollectionsProps) {
         </span>
       </div>
       
-      {/* Category Breakdown */}
+      {/* My Holdings Breakdown */}
       <div className="p-4 border-b border-border">
         <div className="flex gap-2 flex-wrap">
-          {['oocytes', 'enzymes', 'purebreeds'].map((cat) => {
-            const count = collections.filter(c => c.category === cat).length;
-            return (
-              <Badge key={cat} variant="outline" className="text-xs">
-                {getCategoryLabel(cat)}: {count}
-              </Badge>
-            );
-          })}
+          <Badge variant="outline" className="text-xs">Oocytes: 1</Badge>
+          <Badge variant="outline" className="text-xs">Enzymes: 1</Badge>
+          <Badge variant="outline" className="text-xs">PureBreeds: 1</Badge>
         </div>
       </div>
 

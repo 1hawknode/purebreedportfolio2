@@ -216,9 +216,10 @@ export function SpeciesTokenList({ species, isLoading, className }: SpeciesToken
           </thead>
           <tbody>
             {displayedSpecies.map((token, idx) => {
-              // Generate dummy data for units and value
-              const unitsHeld = Math.floor(Math.random() * 50000 + 1000);
-              const unitValue = token.marketCap / (token.holders * 100);
+              // Generate stable dummy data based on token address hash
+              const hash = token.tokenAddress.split('').reduce((a, c) => a + c.charCodeAt(0), 0);
+              const unitsHeld = (hash % 50000) + 1000;
+              const unitValue = token.marketCap / (token.holders * 100) || 0.01;
               const value = unitsHeld * unitValue;
               return (
                 <tr

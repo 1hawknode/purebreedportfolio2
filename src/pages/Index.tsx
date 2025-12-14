@@ -1,13 +1,9 @@
 import { useState } from 'react';
 import { PortfolioPage } from '@/pages/PortfolioPage';
 import { SnapshotsPage } from '@/pages/SnapshotsPage';
-import { SettingsDialog } from '@/components/dialogs/SettingsDialog';
-import { AddonsDialog } from '@/components/dialogs/AddonsDialog';
 import { WalletPopover } from '@/components/WalletPopover';
 import { FooterNav } from '@/components/FooterNav';
 import { useTheme } from '@/hooks/useTheme';
-import { Sun, Moon, Settings, Sparkles, ExternalLink } from 'lucide-react';
-import { Button } from '@/components/ui/button';
 
 import fcbcWhiteLogo from '@/assets/fcbc_white.png';
 import fcbcDarkLogo from '@/assets/fcbc_dark.png';
@@ -15,7 +11,7 @@ import fcbcDarkLogo from '@/assets/fcbc_dark.png';
 type Page = 'portfolio' | 'snapshots';
 
 const Index = () => {
-  const { theme, toggleTheme } = useTheme();
+  const { theme } = useTheme();
   const [currentPage, setCurrentPage] = useState<Page>('portfolio');
 
   const logo = theme === 'dark' ? fcbcDarkLogo : fcbcWhiteLogo;
@@ -31,28 +27,6 @@ const Index = () => {
 
         <div className="flex items-center gap-1">
           <WalletPopover />
-          
-          <Button variant="ghost" size="icon" onClick={toggleTheme} className="h-8 w-8">
-            {theme === 'dark' ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
-          </Button>
-          
-          <AddonsDialog>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <Sparkles className="h-4 w-4" />
-            </Button>
-          </AddonsDialog>
-          
-          <SettingsDialog>
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <Settings className="h-4 w-4" />
-            </Button>
-          </SettingsDialog>
-
-          <a href="https://fcbc.fun" target="_blank" rel="noopener noreferrer">
-            <Button variant="ghost" size="icon" className="h-8 w-8">
-              <ExternalLink className="h-4 w-4" />
-            </Button>
-          </a>
         </div>
       </header>
 
