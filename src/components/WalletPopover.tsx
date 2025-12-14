@@ -1,4 +1,4 @@
-import { Wallet, Copy, ExternalLink, LogOut } from 'lucide-react';
+import { Wallet, Copy, ExternalLink, LogOut, Settings, Sparkles, Sun, Moon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Popover,
@@ -6,8 +6,13 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import { toast } from 'sonner';
+import { useTheme } from '@/hooks/useTheme';
+import { SettingsDialog } from '@/components/dialogs/SettingsDialog';
+import { AddonsDialog } from '@/components/dialogs/AddonsDialog';
 
 export function WalletPopover() {
+  const { theme, toggleTheme } = useTheme();
+  
   const mockWallet = {
     address: '0x1234...5678',
     fullAddress: '0x1234567890abcdef1234567890abcdef12345678',
@@ -67,6 +72,36 @@ export function WalletPopover() {
             <div className="flex justify-between text-sm">
               <span className="text-muted-foreground">ETH Balance</span>
               <span className="font-mono font-medium">{mockWallet.ethBalance} ETH</span>
+            </div>
+          </div>
+
+          {/* Quick Actions */}
+          <div className="pt-2 border-t border-border">
+            <div className="flex items-center justify-between">
+              <span className="text-xs text-muted-foreground">Quick Actions</span>
+              <div className="flex items-center gap-1">
+                <Button variant="ghost" size="icon" className="h-7 w-7" onClick={toggleTheme}>
+                  {theme === 'dark' ? <Sun className="h-3.5 w-3.5" /> : <Moon className="h-3.5 w-3.5" />}
+                </Button>
+                
+                <AddonsDialog>
+                  <Button variant="ghost" size="icon" className="h-7 w-7">
+                    <Sparkles className="h-3.5 w-3.5" />
+                  </Button>
+                </AddonsDialog>
+                
+                <SettingsDialog>
+                  <Button variant="ghost" size="icon" className="h-7 w-7">
+                    <Settings className="h-3.5 w-3.5" />
+                  </Button>
+                </SettingsDialog>
+
+                <a href="https://fcbc.fun" target="_blank" rel="noopener noreferrer">
+                  <Button variant="ghost" size="icon" className="h-7 w-7">
+                    <ExternalLink className="h-3.5 w-3.5" />
+                  </Button>
+                </a>
+              </div>
             </div>
           </div>
         </div>

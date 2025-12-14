@@ -4,6 +4,8 @@ import { NFTCollections } from '@/components/portfolio/NFTCollections';
 import { useSpecies } from '@/hooks/useSpecies';
 import { Wallet, TrendingUp, Coins, Dna, ShoppingCart, Layers } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { QuickBuyDialog } from '@/components/dialogs/QuickBuyDialog';
+import { MultiBuyDialog } from '@/components/dialogs/MultiBuyDialog';
 
 export function PortfolioPage() {
   const { data: species = [], isLoading } = useSpecies(100);
@@ -47,14 +49,18 @@ export function PortfolioPage() {
 
       {/* Quick Actions */}
       <div className="flex gap-3">
-        <Button className="flex-1 gap-2">
-          <ShoppingCart className="h-4 w-4" />
-          QuickBuy
-        </Button>
-        <Button variant="outline" className="flex-1 gap-2">
-          <Layers className="h-4 w-4" />
-          MultiBuy
-        </Button>
+        <QuickBuyDialog>
+          <Button className="flex-1 gap-2">
+            <ShoppingCart className="h-4 w-4" />
+            QuickBuy
+          </Button>
+        </QuickBuyDialog>
+        <MultiBuyDialog>
+          <Button variant="outline" className="flex-1 gap-2">
+            <Layers className="h-4 w-4" />
+            MultiBuy
+          </Button>
+        </MultiBuyDialog>
       </div>
 
       {/* Fyre DNA Pre-Assets List */}
