@@ -1,10 +1,9 @@
 import { useState, useEffect } from 'react';
-import { Box, Lock, Unlock, Clock, Search, Info, Check, X, Loader2 } from 'lucide-react';
+import { Box, Lock, Unlock, Clock, Info, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import {
@@ -19,14 +18,6 @@ interface MysteryBox {
   id: number;
   status: 'blind' | 'revealed' | 'empty';
   hint?: string;
-}
-
-interface WalletSearchResult {
-  address: string;
-  totalValue: string;
-  preAssets: number;
-  custodiedCount: number;
-  topHoldings: { symbol: string; units: string }[];
 }
 
 const hints = [
@@ -54,36 +45,24 @@ const custodiedAssets = [
 
 const epoch0Snaps = ['$FCBC121', '$FCBC19', '$FCBC56', '$FCBC2'];
 
+const leadingPreSnapshots = [
+  { id: '#122', symbol: 'FCBC122', name: 'Syrian Wild Ass', units: '12.5M', rank: '#1' },
+  { id: '#38', symbol: 'FCBC38', name: 'Golden Eagle', units: '8.2M', rank: '#1' },
+  { id: '#12', symbol: 'FCBC12', name: 'Snow Leopard', units: '15.1M', rank: '#1' },
+  { id: '#200', symbol: 'FCBC200', name: 'Blue Whale', units: '9.3M', rank: '#1' },
+];
+
 const myCustodiedSpecies = [
   { symbol: 'FDRG', name: 'Fyre Dragon', units: '12.5M', rank: '#1' },
   { symbol: 'SSRP', name: 'Storm Serpent', units: '15.1M', rank: '#1' },
   { symbol: 'TWLF', name: 'Thunder Wolf', units: '9.3M', rank: '#1' },
 ];
 
-// Mock search results
-const mockSearchResults: Record<string, WalletSearchResult> = {
-  '0x1234': {
-    address: '0x1234...5678',
-    totalValue: '$245,320',
-    preAssets: 87,
-    custodiedCount: 3,
-    topHoldings: [
-      { symbol: 'FDRG', units: '12.5M' },
-      { symbol: 'SSRP', units: '15.1M' },
-      { symbol: 'TWLF', units: '9.3M' },
-    ],
-  },
-};
-
 export function SnapshotsPage() {
   const [boxes, setBoxes] = useState<MysteryBox[]>(initialBoxes);
   const [selectedBox, setSelectedBox] = useState<MysteryBox | null>(null);
   const [showMyHoldings, setShowMyHoldings] = useState(false);
   const [countdown, setCountdown] = useState({ days: 2, hours: 14, minutes: 30, seconds: 39 });
-  const [addressSearch, setAddressSearch] = useState('');
-  const [isSearching, setIsSearching] = useState(false);
-  const [searchResult, setSearchResult] = useState<WalletSearchResult | null>(null);
-  const [searchError, setSearchError] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -117,42 +96,6 @@ export function SnapshotsPage() {
     setSelectedBox(null);
   };
 
-  const handleSearch = () => {
-    if (!addressSearch.trim()) return;
-    
-    setIsSearching(true);
-    setSearchError(null);
-    setSearchResult(null);
-
-    // Simulate API call
-    setTimeout(() => {
-      setIsSearching(false);
-      if (addressSearch.toLowerCase().includes('0x1234')) {
-        setSearchResult(mockSearchResults['0x1234']);
-      } else if (addressSearch.length >= 4) {
-        // Generate random results for any address
-        setSearchResult({
-          address: addressSearch.length > 10 ? `${addressSearch.slice(0, 6)}...${addressSearch.slice(-4)}` : addressSearch,
-          totalValue: `$${(Math.random() * 100000).toFixed(0)}`,
-          preAssets: Math.floor(Math.random() * 50) + 10,
-          custodiedCount: Math.floor(Math.random() * 3),
-          topHoldings: [
-            { symbol: 'FCBC' + Math.floor(Math.random() * 100), units: `${(Math.random() * 10).toFixed(1)}M` },
-            { symbol: 'FCBC' + Math.floor(Math.random() * 100), units: `${(Math.random() * 5).toFixed(1)}M` },
-          ],
-        });
-      } else {
-        setSearchError('Address not found or invalid format');
-      }
-    }, 800);
-  };
-
-  const clearSearch = () => {
-    setAddressSearch('');
-    setSearchResult(null);
-    setSearchError(null);
-  };
-
   const filteredAssets = showMyHoldings 
     ? custodiedAssets.filter(a => a.isMine) 
     : custodiedAssets;
@@ -165,72 +108,6 @@ export function SnapshotsPage() {
         <p className="text-muted-foreground">Monitor Snapshot Events and earn custodian rights.</p>
       </div>
 
-      {/* Address Search */}
-      <div className="space-y-3">
-        <div className="relative flex gap-2">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search wallet address..."
-              value={addressSearch}
-              onChange={(e) => setAddressSearch(e.target.value)}
-              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-              className="pl-10 pr-10"
-            />
-            {addressSearch && (
-              <button
-                onClick={clearSearch}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            )}
-          </div>
-          <Button onClick={handleSearch} disabled={isSearching || !addressSearch.trim()}>
-            {isSearching ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Search'}
-          </Button>
-        </div>
-
-        {/* Search Results */}
-        {searchResult && (
-          <div className="rounded-lg bg-card p-4 shadow-card border border-primary/20">
-            <div className="flex items-center justify-between mb-3">
-              <span className="font-mono text-sm text-primary">{searchResult.address}</span>
-              <Badge variant="secondary">Found</Badge>
-            </div>
-            <div className="grid grid-cols-3 gap-3 mb-3">
-              <div className="text-center">
-                <p className="text-xs text-muted-foreground">Total Value</p>
-                <p className="font-bold">{searchResult.totalValue}</p>
-              </div>
-              <div className="text-center">
-                <p className="text-xs text-muted-foreground">Pre-Assets</p>
-                <p className="font-bold">{searchResult.preAssets}</p>
-              </div>
-              <div className="text-center">
-                <p className="text-xs text-muted-foreground">Custodied</p>
-                <p className="font-bold">{searchResult.custodiedCount}</p>
-              </div>
-            </div>
-            <div>
-              <p className="text-xs text-muted-foreground mb-2">Top Holdings</p>
-              <div className="flex flex-wrap gap-2">
-                {searchResult.topHoldings.map((h, i) => (
-                  <Badge key={i} variant="outline" className="font-mono text-xs">
-                    ${h.symbol}: {h.units}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {searchError && (
-          <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive">
-            {searchError}
-          </div>
-        )}
-      </div>
 
       {/* Countdown Timer */}
       <div className="rounded-lg bg-card p-6 shadow-card">
@@ -253,7 +130,7 @@ export function SnapshotsPage() {
         </div>
         {/* Epoch 0 Snaps */}
         <div className="flex flex-wrap justify-center gap-2">
-          <span className="text-xs text-muted-foreground mr-1">Epoch 0:</span>
+          <span className="text-xs text-muted-foreground mr-1">Epoch 0 snaps.</span>
           {epoch0Snaps.map((snap) => (
             <Badge key={snap} variant="secondary" className="text-xs font-mono">
               {snap}
@@ -265,12 +142,12 @@ export function SnapshotsPage() {
       {/* Pre-Snapshots Leading */}
       <div className="rounded-lg bg-card p-4 shadow-card">
         <h2 className="font-semibold mb-3">Pre-Snapshots I'm Leading</h2>
-        <div className="grid grid-cols-3 gap-2">
-          {myCustodiedSpecies.map((species, i) => (
-            <div key={i} className="bg-muted/50 rounded-lg p-3 text-center border border-success/20">
+        <div className="grid grid-cols-2 gap-2">
+          {leadingPreSnapshots.map((species, i) => (
+            <div key={i} className="bg-muted/50 rounded-lg p-3 border border-success/20">
               <p className="text-xs text-muted-foreground truncate">{species.name}</p>
               <p className="font-mono text-sm font-bold">${species.symbol}</p>
-              <div className="flex items-center justify-center gap-1 mt-1">
+              <div className="flex items-center justify-between mt-1">
                 <Badge variant="outline" className="text-[10px] px-1 py-0 text-success border-success/30">{species.rank}</Badge>
                 <span className="text-xs text-muted-foreground">{species.units}</span>
               </div>
