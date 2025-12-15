@@ -161,7 +161,8 @@ export function SnapshotsPage() {
   return <div className="space-y-6 pb-20">
       {/* Header */}
       <div className="text-center space-y-2">
-        <h1 className="text-2xl font-bold">FCBCC Custody and Snapshots</h1>
+        <h1 className="text-2xl font-bold">FCBC PUREBREEDS
+Snapshots and Custody </h1>
         <p className="text-muted-foreground">Monitor Snapshot Events and earn custodian rights.</p>
       </div>
 
