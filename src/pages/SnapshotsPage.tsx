@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Lock, Unlock, Clock, Search } from 'lucide-react';
+import { Box, Lock, Unlock, Clock, Search, Info, Check, X, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
@@ -19,6 +19,14 @@ interface MysteryBox {
   id: number;
   status: 'blind' | 'revealed' | 'empty';
   hint?: string;
+}
+
+interface WalletSearchResult {
+  address: string;
+  totalValue: string;
+  preAssets: number;
+  custodiedCount: number;
+  topHoldings: { symbol: string; units: string }[];
 }
 
 const hints = [
@@ -52,12 +60,30 @@ const myCustodiedSpecies = [
   { symbol: 'TWLF', name: 'Thunder Wolf', units: '9.3M', rank: '#1' },
 ];
 
+// Mock search results
+const mockSearchResults: Record<string, WalletSearchResult> = {
+  '0x1234': {
+    address: '0x1234...5678',
+    totalValue: '$245,320',
+    preAssets: 87,
+    custodiedCount: 3,
+    topHoldings: [
+      { symbol: 'FDRG', units: '12.5M' },
+      { symbol: 'SSRP', units: '15.1M' },
+      { symbol: 'TWLF', units: '9.3M' },
+    ],
+  },
+};
+
 export function SnapshotsPage() {
   const [boxes, setBoxes] = useState<MysteryBox[]>(initialBoxes);
   const [selectedBox, setSelectedBox] = useState<MysteryBox | null>(null);
   const [showMyHoldings, setShowMyHoldings] = useState(false);
   const [countdown, setCountdown] = useState({ days: 2, hours: 14, minutes: 30, seconds: 39 });
   const [addressSearch, setAddressSearch] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchResult, setSearchResult] = useState<WalletSearchResult | null>(null);
+  const [searchError, setSearchError] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setInterval(() => {
@@ -91,6 +117,42 @@ export function SnapshotsPage() {
     setSelectedBox(null);
   };
 
+  const handleSearch = () => {
+    if (!addressSearch.trim()) return;
+    
+    setIsSearching(true);
+    setSearchError(null);
+    setSearchResult(null);
+
+    // Simulate API call
+    setTimeout(() => {
+      setIsSearching(false);
+      if (addressSearch.toLowerCase().includes('0x1234')) {
+        setSearchResult(mockSearchResults['0x1234']);
+      } else if (addressSearch.length >= 4) {
+        // Generate random results for any address
+        setSearchResult({
+          address: addressSearch.length > 10 ? `${addressSearch.slice(0, 6)}...${addressSearch.slice(-4)}` : addressSearch,
+          totalValue: `$${(Math.random() * 100000).toFixed(0)}`,
+          preAssets: Math.floor(Math.random() * 50) + 10,
+          custodiedCount: Math.floor(Math.random() * 3),
+          topHoldings: [
+            { symbol: 'FCBC' + Math.floor(Math.random() * 100), units: `${(Math.random() * 10).toFixed(1)}M` },
+            { symbol: 'FCBC' + Math.floor(Math.random() * 100), units: `${(Math.random() * 5).toFixed(1)}M` },
+          ],
+        });
+      } else {
+        setSearchError('Address not found or invalid format');
+      }
+    }, 800);
+  };
+
+  const clearSearch = () => {
+    setAddressSearch('');
+    setSearchResult(null);
+    setSearchError(null);
+  };
+
   const filteredAssets = showMyHoldings 
     ? custodiedAssets.filter(a => a.isMine) 
     : custodiedAssets;
@@ -104,14 +166,70 @@ export function SnapshotsPage() {
       </div>
 
       {/* Address Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search wallet address..."
-          value={addressSearch}
-          onChange={(e) => setAddressSearch(e.target.value)}
-          className="pl-10"
-        />
+      <div className="space-y-3">
+        <div className="relative flex gap-2">
+          <div className="relative flex-1">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Input
+              placeholder="Search wallet address..."
+              value={addressSearch}
+              onChange={(e) => setAddressSearch(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
+              className="pl-10 pr-10"
+            />
+            {addressSearch && (
+              <button
+                onClick={clearSearch}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            )}
+          </div>
+          <Button onClick={handleSearch} disabled={isSearching || !addressSearch.trim()}>
+            {isSearching ? <Loader2 className="h-4 w-4 animate-spin" /> : 'Search'}
+          </Button>
+        </div>
+
+        {/* Search Results */}
+        {searchResult && (
+          <div className="rounded-lg bg-card p-4 shadow-card border border-primary/20">
+            <div className="flex items-center justify-between mb-3">
+              <span className="font-mono text-sm text-primary">{searchResult.address}</span>
+              <Badge variant="secondary">Found</Badge>
+            </div>
+            <div className="grid grid-cols-3 gap-3 mb-3">
+              <div className="text-center">
+                <p className="text-xs text-muted-foreground">Total Value</p>
+                <p className="font-bold">{searchResult.totalValue}</p>
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-muted-foreground">Pre-Assets</p>
+                <p className="font-bold">{searchResult.preAssets}</p>
+              </div>
+              <div className="text-center">
+                <p className="text-xs text-muted-foreground">Custodied</p>
+                <p className="font-bold">{searchResult.custodiedCount}</p>
+              </div>
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground mb-2">Top Holdings</p>
+              <div className="flex flex-wrap gap-2">
+                {searchResult.topHoldings.map((h, i) => (
+                  <Badge key={i} variant="outline" className="font-mono text-xs">
+                    ${h.symbol}: {h.units}
+                  </Badge>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
+        {searchError && (
+          <div className="rounded-lg bg-destructive/10 border border-destructive/20 p-3 text-sm text-destructive">
+            {searchError}
+          </div>
+        )}
       </div>
 
       {/* Countdown Timer */}
@@ -200,6 +318,34 @@ export function SnapshotsPage() {
         </div>
       </div>
 
+      {/* How Snapshots Work */}
+      <div className="rounded-lg bg-card p-6 shadow-card space-y-4">
+        <div className="flex items-center gap-2">
+          <Info className="h-5 w-5 text-primary" />
+          <h2 className="font-semibold">How Snapshots Work</h2>
+        </div>
+        <div className="space-y-3 text-sm text-muted-foreground">
+          <p>A snapshot event is a scheduled moment where the system records blockchain holdings to identify the top holder of randomly selected FCBC Pre-assets.</p>
+          <ul className="space-y-2">
+            <li className="flex items-start gap-2">
+              <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+              <span>Snapshots occur once every week</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+              <span>Each event selects 3 to 10 random Pre-assets</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+              <span>Only the top holder of each selected species is recognized as the Custodian</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
+              <span>Selection is random, so users cannot predict which species will be snapped</span>
+            </li>
+          </ul>
+        </div>
+      </div>
 
       {/* Custodied Assets */}
       <div className="rounded-lg bg-card shadow-card">
