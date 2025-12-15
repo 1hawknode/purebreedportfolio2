@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Box, Lock, Unlock, Clock, Info, Check, Search } from 'lucide-react';
+import { Box, Lock, Unlock, Clock, Search } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Switch } from '@/components/ui/switch';
@@ -200,34 +200,6 @@ export function SnapshotsPage() {
         </div>
       </div>
 
-      {/* How Snapshots Work */}
-      <div className="rounded-lg bg-card p-6 shadow-card space-y-4">
-        <div className="flex items-center gap-2">
-          <Info className="h-5 w-5 text-primary" />
-          <h2 className="font-semibold">How Snapshots Work</h2>
-        </div>
-        <div className="space-y-3 text-sm text-muted-foreground">
-          <p>A snapshot event is a scheduled moment where the system records blockchain holdings to identify the top holder of randomly selected FCBC Pre-assets.</p>
-          <ul className="space-y-2">
-            <li className="flex items-start gap-2">
-              <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-              <span>Snapshots occur once every week</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-              <span>Each event selects 3 to 10 random Pre-assets</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-              <span>Only the top holder of each selected species is recognized as the Custodian</span>
-            </li>
-            <li className="flex items-start gap-2">
-              <Check className="h-4 w-4 text-primary mt-0.5 shrink-0" />
-              <span>Selection is random, so users cannot predict which species will be snapped</span>
-            </li>
-          </ul>
-        </div>
-      </div>
 
       {/* Custodied Assets */}
       <div className="rounded-lg bg-card shadow-card">

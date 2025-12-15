@@ -22,35 +22,37 @@ const Index = () => {
   const logo = theme === 'dark' ? fcbcDarkLogo : fcbcWhiteLogo;
 
   return (
-     <WagmiProvider config={wagmiConfig}>
-     <QueryClientProvider client={queryClient}>
-    <div className="min-h-screen bg-background">
-      {/* Header */}
-      <header className="sticky top-0 z-30 flex items-center justify-between h-14 px-4 sm:px-6 bg-background/80 backdrop-blur-md border-b border-border">
-        <div className="flex items-center gap-2">
-          <img src={logo} alt="FCBC" className="h-8 w-8" />
-          <span className="font-semibold text-sm">Fyre App 2</span>
+    <WagmiProvider config={wagmiConfig}>
+      <QueryClientProvider client={queryClient}>
+        <div className="min-h-screen bg-background">
+          {/* Header */}
+          <header className="sticky top-0 z-30 flex items-center justify-between h-14 px-4 sm:px-6 bg-background/80 backdrop-blur-md border-b border-border">
+            <div className="flex items-center gap-2">
+              <img src={logo} alt="FCBC" className="h-8 w-8" />
+              <span className="font-semibold text-sm">Fyre App 2</span>
+            </div>
+
+            <div className="flex items-center gap-1">
+              <WalletPopover />
+            </div>
+          </header>
+
+          <main className="p-4 space-y-4 max-w-4xl mx-auto">
+            {currentPage === 'portfolio' ? <PortfolioPage /> : <SnapshotsPage />}
+          </main>
+
+          {/* Footer Navigation */}
+          <FooterNav currentPage={currentPage} onPageChange={setCurrentPage} />
+
+          {/* Footer */}
+          <footer className="border-t border-border py-3 px-4 text-center text-xs text-muted-foreground mb-14">
+            <a href="https://fcbc.fun" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
+              fcbc.fun
+            </a>
+          </footer>
         </div>
-
-        <div className="flex items-center gap-1">
-          <WalletPopover />
-        </div>
-      </header>
-
-      <main className="p-4 space-y-4 max-w-4xl mx-auto">
-        {currentPage === 'portfolio' ? <PortfolioPage /> : <SnapshotsPage />}
-      </main>
-
-      {/* Footer Navigation */}
-      <FooterNav currentPage={currentPage} onPageChange={setCurrentPage} />
-
-      {/* Footer */}
-      <footer className="border-t border-border py-3 px-4 text-center text-xs text-muted-foreground mb-14">
-        <a href="https://fcbc.fun" target="_blank" rel="noopener noreferrer" className="hover:text-foreground transition-colors">
-          fcbc.fun
-        </a>
-      </footer>
-    </div>
+      </QueryClientProvider>
+    </WagmiProvider>
   );
 };
 
