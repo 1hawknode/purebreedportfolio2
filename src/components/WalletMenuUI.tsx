@@ -1,3 +1,6 @@
+import { useBalance } from "wagmi";
+import { base } from "wagmi/chains";
+
 import {
   Wallet,
   Copy,
@@ -29,6 +32,10 @@ import { AddonsDialog } from "@/components/dialogs/AddonsDialog";
 export function WalletPopover() {
   const { theme, toggleTheme } = useTheme();
   const { address, isConnected } = useAccount();
+  const { data: ethBalance } = useBalance({
+   address,
+   chainId: base.id,
+});
   const { disconnect } = useDisconnect();
   const { open } = useWeb3Modal();
 
@@ -37,6 +44,15 @@ export function WalletPopover() {
     if (!addr) return "";
     return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
   };
+
+  const ETH_PRICE_USD = 3000; // temporary, static
+
+  const portfolioValue =
+    ethBalance
+      ? (Number(ethBalance.formatted) * ETH_PRICE_USD).toLocaleString()
+      : null;
+
+  const voteTickets = 0;
 
   const copyAddress = () => {
     if (!address) return;
@@ -114,18 +130,26 @@ export function WalletPopover() {
             <div className="space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">Portfolio Value</span>
-                <span className="font-mono font-medium">$—</span>
+                <span className="font-mono font-medium">
+                  {portfolioValue ? `$${portfolioValue}` : "—"}
+                </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground">ETH Balance</span>
-                <span className="font-mono font-medium">—</span>
+                <span className="font-mono font-medium">
+                  {ethBalance
+                    ? `${Number(ethBalance.formatted).toFixed(4)} ${ethBalance.symbol}`
+                    : "—"}
+                </span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-muted-foreground flex items-center gap-1">
                   <Ticket className="h-3 w-3" />
                   Vote Tickets
                 </span>
-                <span className="font-mono font-medium">—</span>
+                <span className="font-mono font-medium">
+                  {voteTickets}
+                </span>
               </div>
             </div>
 
