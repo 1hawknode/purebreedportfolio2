@@ -17,33 +17,46 @@ export function WalletPopover() {
   const { disconnect } = useDisconnect();
   const { open } = useWeb3Modal();
   const { address, isConnected } = useAccount();
-  const mockWallet = {
-    address: '0x1234...5678',
-    fullAddress: '0x1234567890abcdef1234567890abcdef12345678',
-    ethBalance: '2.45',
-    portfolioValue: '$732,463',
-    pnl: '+$729,765',
-    voteTickets: 36,
-    freeSearchesRemaining: 5,
+  
+  const truncateAddress = (addr?: string) => {
+    if (!addr) return "";
+    return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
   };
 
   const copyAddress = () => {
-    navigator.clipboard.writeText(mockWallet.fullAddress);
+    if (!address) return;
+    navigator.clipboard.writeText(address);
     toast.success('Address copied to clipboard');
   };
 
   return (
     <Popover>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="h-8 w-8">
-          <Wallet className="h-4 w-4" />
-        </Button>
+        {!isConnected ? (
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => open()}
+          >
+           <Wallet className="h-4 w-4" />
+          </Button>
+        ) : (
+          <Button variant="ghost" size="icon" className="h-8 w-8">
+            <Wallet className="h-4 w-4" />
+          </Button>
+        )}
       </PopoverTrigger>
       <PopoverContent className="w-72" align="end">
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <span className="text-sm font-medium">Connected Wallet</span>
-            <Button variant="ghost" size="sm" className="h-6 text-xs text-destructive hover:text-destructive">
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="h-6 text-xs text-destructive hover:text-destructive">
+              onClick={() => disconnect()}
+            >
               <LogOut className="h-3 w-3 mr-1" />
               Disconnect
             </Button>
@@ -54,12 +67,14 @@ export function WalletPopover() {
               W
             </div>
             <div className="flex-1">
-              <p className="font-mono text-sm">{mockWallet.address}</p>
+              <p className="font-mono text-sm">
+                {truncateAddress(address)}
+              </p>
             </div>
             <Button variant="ghost" size="icon" className="h-6 w-6" onClick={copyAddress}>
               <Copy className="h-3 w-3" />
             </Button>
-            <a href={`https://basescan.org/address/${mockWallet.fullAddress}`} target="_blank" rel="noopener noreferrer">
+            <a href={`https://basescan.org/address/${address}`} target="_blank" rel="noopener noreferrer">
               <Button variant="ghost" size="icon" className="h-6 w-6">
                 <ExternalLink className="h-3 w-3" />
               </Button>
