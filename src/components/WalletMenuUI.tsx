@@ -45,8 +45,6 @@ export function WalletPopover() {
         ).toLocaleString()
       : null;
 
-
-
   const truncateAddress = (addr?: string) => {
     if (!addr) return "";
     return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
@@ -59,22 +57,6 @@ export function WalletPopover() {
     navigator.clipboard.writeText(address);
     toast.success("Address copied to clipboard");
   };
-
-  useEffect(() => {
-    const fetchEthPrice = async () => {
-      try {
-        const res = await fetch(
-          "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
-        );
-        const data = await res.json();
-        setEthPriceUsd(data.ethereum.usd);
-      } catch (error) {
-        console.error("Failed to fetch ETH price", error);
-      }
-    };
-
-    fetchEthPrice();
-  }, []);
 
   return (
     <Popover>
