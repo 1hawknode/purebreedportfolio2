@@ -7,7 +7,6 @@ import {
   Sparkles,
   Sun,
   Moon,
-  Search,
   Ticket,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -38,11 +37,9 @@ export function WalletPopover() {
 
   const ETH_PRICE_USD = 3000; // temporary, static
 
-  const portfolioValue =
-    ethBalance
-      ? (Number(ethBalance.formatted) * ETH_PRICE_USD).toLocaleString()
-      : null;
-
+  const portfolioValue = ethBalance
+    ? (Number(ethBalance.formatted) * ETH_PRICE_USD).toLocaleString()
+    : null;
 
   const truncateAddress = (addr?: string) => {
     if (!addr) return "";
@@ -126,24 +123,25 @@ export function WalletPopover() {
                   {portfolioValue ? `$${portfolioValue}` : "—"}
                 </span>
               </div>
-            </div>
-            <div className="space-y-2 text-sm">
-              <div className="flex justify-between">
-                <span className="text-muted-foreground">ETH Balance</span>
-                <span className="font-mono font-medium">
-                  {ethBalance
-                    ? Number(formatEther(ethBalance.value)).toFixed(4)
-                    : "—"}{" "}
-                  ETH
-                </span>
-              </div>
 
-              <div className="flex justify-between">
-                <span className="text-muted-foreground flex items-center gap-1">
-                  <Ticket className="h-3 w-3" />
-                  Vote Tickets
-                </span>
-                <span className="font-mono font-medium">—</span>
+              <div className="space-y-2 text-sm">
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground">ETH Balance</span>
+                  <span className="font-mono font-medium">
+                    {ethBalance
+                      ? Number(formatEther(ethBalance.value)).toFixed(4)
+                      : "—"}{" "}
+                    ETH
+                  </span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span className="text-muted-foreground flex items-center gap-1">
+                    <Ticket className="h-3 w-3" />
+                    Vote Tickets
+                  </span>
+                  <span className="font-mono font-medium">—</span>
+                </div>
               </div>
             </div>
 
