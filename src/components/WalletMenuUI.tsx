@@ -23,7 +23,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { SettingsDialog } from "@/components/dialogs/SettingsDialog";
 import { AddonsDialog } from "@/components/dialogs/AddonsDialog";
 import { formatEther } from "viem";
-import { useEffect, useState } from "react";
+import { useEthPrice } from "@/hooks/useEthPrice";
 
 export function WalletPopover() {
   const { theme, toggleTheme } = useTheme();
@@ -36,7 +36,7 @@ export function WalletPopover() {
     chainId: base.id,
   });
 
-  const [ethPriceUsd, setEthPriceUsd] = useState<number | null>(null);
+  const { priceUsd: ethPriceUsd } = useEthPrice();
 
   const portfolioValue =
     ethBalance && ethPriceUsd
