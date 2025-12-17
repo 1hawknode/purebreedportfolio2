@@ -126,8 +126,13 @@ export function WalletPopover() {
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">Portfolio Value</span>
-                <span className="font-mono font-medium">
+                <span className="font-mono font-medium flex items-center gap-2">
                   {portfolioValue ? `$${portfolioValue}` : "—"}
+                  {priceChangePercent !== null && (
+                    <span>
+                      {priceChangePercent.toFixed(2)}%
+                    </span>
+                  )}
                 </span>
               </div>
 
