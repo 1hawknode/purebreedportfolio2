@@ -13,6 +13,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { useWeb3Modal } from "@web3modal/wagmi/react";
 import { useAccount, useDisconnect, useBalance } from "wagmi";
+import { base } from "wagmi/chains";
 import {
   Popover,
   PopoverContent,
@@ -32,7 +33,16 @@ export function WalletPopover() {
 
   const { data: ethBalance } = useBalance({
     address,
+    chainId: base.id,
   });
+
+  const ETH_PRICE_USD = 3000; // temporary, static
+
+  const portfolioValue =
+    ethBalance
+      ? (Number(ethBalance.formatted) * ETH_PRICE_USD).toLocaleString()
+      : null;
+
 
   const truncateAddress = (addr?: string) => {
     if (!addr) return "";
@@ -65,7 +75,7 @@ export function WalletPopover() {
           <div className="space-y-4">
             {/* Header */}
             <div className="flex items-center justify-between">
-              <span className="text-sm font-medium">Connected Wallet</span>
+              <span className="text-sm font-medium">Wallet Connected</span>
               <Button
                 variant="ghost"
                 size="sm"
@@ -110,6 +120,12 @@ export function WalletPopover() {
             </div>
 
             {/* Balances */}
+            <div className="space-y-2">
+              <div className="flex justify-between text-sm">
+                <span className="font-mono font-medium">
+                  {portfolioValue ? `$${portfolioValue}` : "—"}
+                </span>
+              </div>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">ETH Balance</span>
