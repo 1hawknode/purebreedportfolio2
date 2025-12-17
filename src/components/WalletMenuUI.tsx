@@ -23,6 +23,7 @@ import { useTheme } from "@/hooks/useTheme";
 import { SettingsDialog } from "@/components/dialogs/SettingsDialog";
 import { AddonsDialog } from "@/components/dialogs/AddonsDialog";
 import { formatEther } from "viem";
+import { useEffect, useState } from "react";
 
 export function WalletPopover() {
   const { theme, toggleTheme } = useTheme();
@@ -35,12 +36,16 @@ export function WalletPopover() {
     chainId: base.id,
   });
 
-  const ETH_PRICE_USD = 3000; // temporary, static
+  const [ethPriceUsd, setEthPriceUsd] = useState<number | null>(null);
 
   const portfolioValue =
-    ethBalance
-      ? (Number(formatEther(ethBalance.value)) * ETH_PRICE_USD).toLocaleString()
+    ethBalance && ethPriceUsd
+      ? (
+        Number(formatEther(ethBalance.value)) * ethPriceUsd
+        ).toLocaleString()
       : null;
+
+
 
   const truncateAddress = (addr?: string) => {
     if (!addr) return "";
@@ -54,6 +59,22 @@ export function WalletPopover() {
     navigator.clipboard.writeText(address);
     toast.success("Address copied to clipboard");
   };
+
+  useEffect(() => {
+    const fetchEthPrice = async () => {
+      try {
+        const res = await fetch(
+          "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
+        );
+        const data = await res.json();
+        setEthPriceUsd(data.ethereum.usd);
+      } catch (error) {
+        console.error("Failed to fetch ETH price", error);
+      }
+    };
+
+    fetchEthPrice();
+  }, []);
 
   return (
     <Popover>
