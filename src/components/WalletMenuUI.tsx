@@ -46,6 +46,8 @@ export function WalletPopover() {
     return `${addr.slice(0, 6)}…${addr.slice(-4)}`;
   };
 
+  const voteTickets = 0;
+
   const copyAddress = () => {
     if (!address) return;
     navigator.clipboard.writeText(address);
