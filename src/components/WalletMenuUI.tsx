@@ -24,7 +24,7 @@ import { SettingsDialog } from "@/components/dialogs/SettingsDialog";
 import { AddonsDialog } from "@/components/dialogs/AddonsDialog";
 import { formatEther } from "viem";
 
-export function WalletMenuUI() {
+export function WalletPopover() {
   const { theme, toggleTheme } = useTheme();
   const { disconnect } = useDisconnect();
   const { open } = useWeb3Modal();

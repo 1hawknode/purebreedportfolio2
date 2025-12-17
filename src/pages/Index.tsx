@@ -4,7 +4,7 @@ import { wagmiConfig } from '@/lib/wagmi-config';
 import { useState } from 'react';
 import { PortfolioPage } from '@/pages/PortfolioPage';
 import { SnapshotsPage } from '@/pages/SnapshotsPage';
-import { WalletMenuUI } from '@/components/WalletMenuUI';
+import { WalletPopover } from '@/components/WalletMenuUI';
 import { FooterNav } from '@/components/FooterNav';
 import { useTheme } from '@/hooks/useTheme';
 
