@@ -143,7 +143,9 @@ export function WalletPopover() {
                     <Ticket className="h-3 w-3" />
                     Vote Tickets
                   </span>
-                  <span className="font-mono font-medium">—</span>
+                  <span className="font-mono font-medium">
+                    {voteTickets}
+                  </span>
                 </div>
               </div>
             </div>
