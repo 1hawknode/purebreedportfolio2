@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
-const REFRESH_INTERVAL = 60_000; // 60 seconds
+const CACHE_KEY = "eth_price_usd";
+const CACHE_TTL = 60 * 1000; // 60 seconds
 
 export function useEthPrice() {
   const [priceUsd, setPriceUsd] = useState<number | null>(null);
@@ -8,7 +9,25 @@ export function useEthPrice() {
   const [error, setError] = useState<Error | null>(null);
 
   useEffect(() => {
-    let isMounted = true;
+    const loadCachedPrice = () => {
+      try {
+        const cached = localStorage.getItem(CACHE_KEY);
+        if (!cached) return false;
+
+        const { price, timestamp } = JSON.parse(cached);
+        const isFresh = Date.now() - timestamp < CACHE_TTL;
+
+        if (isFresh) {
+          setPriceUsd(price);
+          setIsLoading(false);
+          return true;
+        }
+
+        return false;
+      } catch {
+        return false;
+      }
+    };
 
     const fetchEthPrice = async () => {
       try {
@@ -23,32 +42,30 @@ export function useEthPrice() {
         }
 
         const data = await res.json();
+        const price = data.ethereum.usd;
 
-        if (isMounted) {
-          setPriceUsd(data.ethereum.usd);
-        }
+        setPriceUsd(price);
+
+        localStorage.setItem(
+          CACHE_KEY,
+          JSON.stringify({
+            price,
+            timestamp: Date.now(),
+          })
+        );
       } catch (err) {
-        if (isMounted) {
-          setError(err as Error);
-        }
+        setError(err as Error);
       } finally {
-        if (isMounted) {
-          setIsLoading(false);
-        }
+        setIsLoading(false);
       }
     };
 
-    // fetch immediately
-    fetchEthPrice();
+    const hasFreshCache = loadCachedPrice();
 
-    // then refresh every 60s
-    const intervalId = setInterval(fetchEthPrice, REFRESH_INTERVAL);
-
-    // cleanup on unmount
-    return () => {
-      isMounted = false;
-      clearInterval(intervalId);
-    };
+    // Always fetch if cache is missing or stale
+    if (!hasFreshCache) {
+      fetchEthPrice();
+    }
   }, []);
 
   return {
