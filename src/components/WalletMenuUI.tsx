@@ -117,8 +117,9 @@ export function WalletPopover() {
             </div>
 
             {/* Balances */}
-            <div className="space-y-2">
-              <div className="flex justify-between text-sm">
+            <div className="space-y-2 text-sm">
+              <div className="flex justify-between">
+                <span className="text-muted-foreground">Portfolio Value</span>
                 <span className="font-mono font-medium">
                   {portfolioValue ? `$${portfolioValue}` : "—"}
                 </span>
