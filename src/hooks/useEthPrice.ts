@@ -80,7 +80,7 @@ export function useEthPrice() {
     const interval = setInterval(fetchEthPrice, 60 * 1000);
 
     return () => clearInterval(interval);
-  }, [priceUsd]);
+  }, []);
 
   return {
     priceUsd,
