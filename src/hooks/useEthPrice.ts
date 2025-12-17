@@ -2,40 +2,14 @@ import { useEffect, useState } from "react";
 
 const CACHE_KEY = "eth_price_usd";
 const CACHE_TTL = 60 * 1000; // 60 seconds
-const REFRESH_INTERVAL = 60 * 1000; // 60 seconds
 
 export function useEthPrice() {
   const [priceUsd, setPriceUsd] = useState<number | null>(null);
+  const [previousPriceUsd, setPreviousPriceUsd] = useState<number | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
-  // Helper: fetch from API and update state + cache
-  const fetchPrice = async () => {
-    try {
-      setIsLoading(true);
-      const res = await fetch(
-        "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
-      );
-
-      if (!res.ok) throw new Error("Failed to fetch ETH price");
-
-      const data = await res.json();
-      const price = data.ethereum.usd;
-
-      setPriceUsd(price);
-      localStorage.setItem(
-        CACHE_KEY,
-        JSON.stringify({ price, timestamp: Date.now() })
-      );
-    } catch (err) {
-      setError(err as Error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
-    // 1️⃣ Initial load: try cache first
     const loadCachedPrice = () => {
       try {
         const cached = localStorage.getItem(CACHE_KEY);
@@ -56,16 +30,57 @@ export function useEthPrice() {
       }
     };
 
+    const fetchEthPrice = async () => {
+      try {
+        setIsLoading(true);
+
+        const res = await fetch(
+          "https://api.coingecko.com/api/v3/simple/price?ids=ethereum&vs_currencies=usd"
+        );
+
+        if (!res.ok) {
+          throw new Error("Failed to fetch ETH price");
+        }
+
+        const data = await res.json();
+        const newPrice = data.ethereum.usd;
+
+        // Track previous price
+        setPreviousPriceUsd(priceUsd); // store current price before updating
+        setPriceUsd(newPrice);
+
+        // Update cache
+        localStorage.setItem(
+          CACHE_KEY,
+          JSON.stringify({
+            price: newPrice,
+            timestamp: Date.now(),
+          })
+        );
+      } catch (err) {
+        setError(err as Error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
     const hasFreshCache = loadCachedPrice();
 
-    // Fetch immediately if cache is missing or stale
-    if (!hasFreshCache) fetchPrice();
+    // Always fetch if cache is missing or stale
+    if (!hasFreshCache) {
+      fetchEthPrice();
+    }
 
-    // 2️⃣ Interval refresh: always fetch every 60s
-    const interval = setInterval(fetchPrice, REFRESH_INTERVAL);
+    // Auto-refresh every 60s
+    const interval = setInterval(fetchEthPrice, 60 * 1000);
 
     return () => clearInterval(interval);
-  }, []);
+  }, [priceUsd]); // priceUsd in dependency to always track previous
 
-  return { priceUsd, isLoading, error };
+  return {
+    priceUsd,
+    previousPriceUsd,
+    isLoading,
+    error,
+  };
 }
