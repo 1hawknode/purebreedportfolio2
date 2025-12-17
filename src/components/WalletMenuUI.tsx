@@ -126,6 +126,7 @@ export function WalletPopover() {
                   {portfolioValue ? `$${portfolioValue}` : "—"}
                 </span>
               </div>
+            <div>
             <div className="space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-muted-foreground">ETH Balance</span>
