@@ -9,6 +9,12 @@ export function useEthPrice() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
+  // Computed price change %
+  const priceChangePercent =
+    previousPriceUsd && priceUsd
+      ? ((priceUsd - previousPriceUsd) / previousPriceUsd) * 100
+      : null;
+
   useEffect(() => {
     const loadCachedPrice = () => {
       try {
@@ -46,7 +52,7 @@ export function useEthPrice() {
         const newPrice = data.ethereum.usd;
 
         // Track previous price
-        setPreviousPriceUsd(priceUsd); // store current price before updating
+        setPreviousPriceUsd(priceUsd);
         setPriceUsd(newPrice);
 
         // Update cache
@@ -66,7 +72,6 @@ export function useEthPrice() {
 
     const hasFreshCache = loadCachedPrice();
 
-    // Always fetch if cache is missing or stale
     if (!hasFreshCache) {
       fetchEthPrice();
     }
@@ -75,11 +80,12 @@ export function useEthPrice() {
     const interval = setInterval(fetchEthPrice, 60 * 1000);
 
     return () => clearInterval(interval);
-  }, [priceUsd]); // priceUsd in dependency to always track previous
+  }, [priceUsd]);
 
   return {
     priceUsd,
     previousPriceUsd,
+    priceChangePercent,
     isLoading,
     error,
   };
