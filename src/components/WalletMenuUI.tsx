@@ -37,9 +37,10 @@ export function WalletPopover() {
 
   const ETH_PRICE_USD = 3000; // temporary, static
 
-  const portfolioValue = ethBalance
-    ? (Number(ethBalance.formatted) * ETH_PRICE_USD).toLocaleString()
-    : null;
+  const portfolioValue =
+    ethBalance
+      ? (Number(formatEther(ethBalance.value)) * ETH_PRICE_USD).toLocaleString()
+      : null;
 
   const truncateAddress = (addr?: string) => {
     if (!addr) return "";
