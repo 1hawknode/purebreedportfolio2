@@ -36,7 +36,7 @@ export function WalletPopover() {
     chainId: base.id,
   });
 
-  const { priceUsd: ethPriceUsd } = useEthPrice();
+  const { priceUsd: ethPriceUsd, priceChangePercent } = useEthPrice();
 
   const portfolioValue =
     ethBalance && ethPriceUsd
@@ -57,6 +57,18 @@ export function WalletPopover() {
     navigator.clipboard.writeText(address);
     toast.success("Address copied to clipboard");
   };
+
+  const formattedPriceChange =
+    priceChangePercent !== null
+      ? `${priceChangePercent > 0 ? "+" : ""}${priceChangePercent.toFixed(2)}%`
+      : null;
+
+  const priceChangeColor =
+    priceChangePercent !== null
+      ? priceChangePercent > 0
+      ? "text-green-500"
+      : "text-red-500"
+    : "";
 
   return (
     <Popover>
@@ -128,9 +140,9 @@ export function WalletPopover() {
                 <span className="text-muted-foreground">Portfolio Value</span>
                 <span className="font-mono font-medium flex items-center gap-2">
                   {portfolioValue ? `$${portfolioValue}` : "—"}
-                  {priceChangePercent !== null && (
-                    <span>
-                      {priceChangePercent.toFixed(2)}%
+                  {formattedPriceChange && (
+                    <span className={`text-xs font-medium ${priceChangeColor}`}>
+                      {formattedPriceChange}
                     </span>
                   )}
                 </span>
