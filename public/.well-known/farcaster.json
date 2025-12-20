@@ -21,7 +21,6 @@
     "tagline": "A glimpse into the future",
     "ogTitle": "Fyre App 2",
     "ogDescription": "A glimpse into the future",
-    "ogImageUrl": "https://purebreedportfolio2.vercel.app/og.png",
-    "noindex": true
+    "ogImageUrl": "https://purebreedportfolio2.vercel.app/og.png"
   }
 }
