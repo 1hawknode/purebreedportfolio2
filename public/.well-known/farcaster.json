@@ -1,0 +1,26 @@
+{
+  "accountAssociation": {  // these will be added in step 5
+    "header": "",
+    "payload": "",
+    "signature": ""
+  },
+  "miniapp": {
+    "version": "1",
+    "name": "Fyre App 2",
+    "homeUrl": "https://purebreedportfolio2.vercel.app",
+    "iconUrl": "https://purebreedportfolio2.vercel.app/icon.png",
+    "splashImageUrl": "https://purebreedportfolio2.vercel.app/splash.png",
+    "splashBackgroundColor": "#0000fe",
+    "webhookUrl": "https://purebreedportfolio2.vercel.app/api/webhook",
+    "subtitle": "Fast, fun, social",
+    "description": "A glimpse into the future",    
+    "primaryCategory": "social",
+    "tags": ["example", "miniapp", "baseapp"],
+    "heroImageUrl": "https://purebreedportfolio2.vercel.app/og.png",
+    "tagline": "A glimpse into the future",
+    "ogTitle": "Fyre App 2",
+    "ogDescription": "A glimpse into the future",
+    "ogImageUrl": "https://purebreedportfolio2.vercel.app/og.png",
+    "noindex": true
+  }
+}
